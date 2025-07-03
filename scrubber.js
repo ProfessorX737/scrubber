@@ -69,15 +69,18 @@ ScrubberView.prototype.createDOM = function () {
   this.track = document.createElement("div");
   this.progress = document.createElement("div");
   this.thumb = document.createElement("div");
+  this.tooltip = document.createElement("div");
 
   this.elt.className = "scrubber";
   this.track.className = "track";
   this.progress.className = "progress";
   this.thumb.className = "thumb";
+  this.tooltip.className = "tooltip";
 
   this.elt.appendChild(this.track);
   this.elt.appendChild(this.progress);
   this.elt.appendChild(this.thumb);
+  this.elt.appendChild(this.tooltip);
 };
 
 ScrubberView.prototype.redraw = function () {
@@ -86,6 +89,16 @@ ScrubberView.prototype.redraw = function () {
   this.thumb.style.top = "50%";
   this.thumb.style.left = frac * 100 + "%";
   this.progress.style.width = frac * 100 + "%";
+};
+
+ScrubberView.prototype.getValueFromPageX = function (pageX) {
+  var rect = this.elt.getBoundingClientRect();
+  var xOffset = window.pageXOffset;
+  var left = rect.left + xOffset;
+  var width = rect.width;
+
+  var frac = Math.min(1, Math.max((pageX - left) / width, 0));
+  return (1 - frac) * this.min() + frac * this.max();
 };
 
 ScrubberView.prototype.attachListeners = function () {
@@ -156,5 +169,33 @@ ScrubberView.prototype.attachListeners = function () {
     if (!mousedown) return;
     evt.preventDefault();
     setValueFromPageX(evt.changedTouches[0].pageX);
+  });
+
+  // Tooltip functionality
+  this.elt.addEventListener("mouseenter", function () {
+    self.tooltip.style.opacity = "1";
+  });
+
+  this.elt.addEventListener("mouseleave", function () {
+    self.tooltip.style.opacity = "0";
+  });
+
+  this.elt.addEventListener("mousemove", function (evt) {
+    if (mousedown) return; // Don't show tooltip while dragging
+
+    var rect = self.elt.getBoundingClientRect();
+    var xOffset = window.pageXOffset;
+    var left = rect.left + xOffset;
+    var relativeX = evt.pageX - left;
+
+    // Position tooltip
+    self.tooltip.style.left = relativeX + "px";
+
+    // Calculate and display value
+    var value = self.getValueFromPageX(evt.pageX);
+
+    // Format the value (you can customize this formatting)
+    var displayValue = self.step() > 0 ? value.toFixed(0) : value.toFixed(2);
+    self.tooltip.textContent = displayValue;
   });
 };
