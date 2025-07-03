@@ -1,68 +1,88 @@
+.scrubber-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .scrubber {
-  margin-top: 10px;
-  width: 200px;
-  height: 40px;
   position: relative;
+  width: 100%;
 }
 
 .scrubber .track {
   position: absolute;
   top: 50%;
-  left: 0px;
-  width: 100%;
-  height: 6px;
-  cursor: pointer;
-  background: #ddd;
-  background-clip: content-box;
-  padding: 5px;
-  border-radius: 10px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #ddd;
   transform: translateY(-50%);
-  transition: height 0.2s ease 0s;
+  border-radius: 8px;
+  padding: 5px;
+  background-clip: content-box;
+  transition: height 0.2s ease;
 }
 
 .scrubber .progress {
   position: absolute;
   top: 50%;
-  left: 0px;
-  width: 0%;
-  height: 6px;
-  cursor: pointer;
-  background: #4f81bd;
-  border-radius: 10px;
+  left: 0;
+  height: 4px;
+  background-color: #007bff;
   transform: translateY(-50%);
+  border-radius: 8px;
+  pointer-events: none;
 }
 
 .scrubber .thumb {
   position: absolute;
-  top: 50%;
-  left: 0px;
-  width: 15px;
-  height: 15px;
-  padding: 7px;
+  width: 16px;
+  height: 16px;
+  background-color: #007bff;
+  border-radius: 50%;
   cursor: pointer;
-  border-radius: 100%;
-  background: #4f81bd;
   background-clip: content-box;
+  padding: 7px;
   transform: translate(-50%, -50%);
-  transition: width 0.2s ease 0s, height 0.2s ease 0s, opacity 0.2s ease 0s;
+  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.scrubber .thumb:hover,
+.scrubber .thumb.dragging {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Hover animations for the entire scrubber */
+.scrubber:hover .track,
+.scrubber:hover .progress {
+  height: 6px;
+}
+
+.scrubber:hover .thumb {
+  width: 18px;
+  height: 18px;
+}
+
+.scrubber:hover .tooltip {
+  opacity: 1;
 }
 
 .scrubber .tooltip {
   position: absolute;
-  top: -18px;
-  left: 0px;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.8);
+  bottom: 100%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
   color: white;
+  padding: 6px 8px;
   border-radius: 4px;
   font-size: 12px;
-  font-family: Arial, sans-serif;
   white-space: nowrap;
-  pointer-events: none;
   opacity: 0;
-  transform: translateX(-50%);
   transition: opacity 0.2s ease;
-  z-index: 10;
+  pointer-events: none;
+  margin-bottom: 8px;
+  line-height: 1.3;
 }
 
 .scrubber .tooltip::after {
@@ -70,22 +90,53 @@
   position: absolute;
   top: 100%;
   left: 50%;
-  margin-left: -4px;
+  transform: translateX(-50%);
   border: 4px solid transparent;
   border-top-color: rgba(0, 0, 0, 0.8);
 }
 
-.scrubber:hover .tooltip {
-  opacity: 1;
+.time-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+  transition: color 0.2s ease;
 }
 
-.scrubber:hover .thumb,
-.thumb.dragging {
-  width: 20px;
-  height: 20px;
+.scrubber-container:hover .time-container {
+  color: #333;
 }
 
-.scrubber:hover .track,
-.scrubber:hover .progress {
-  height: 8px;
+.time-container .start-time-label {
+  text-align: left;
+}
+
+.time-container .end-time-label {
+  text-align: right;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .time-container {
+    font-size: 10px;
+  }
+
+  .scrubber .tooltip {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+}
+
+/* Focus states for accessibility */
+.scrubber-container:focus-within .scrubber .track,
+.scrubber-container:focus-within .scrubber .progress {
+  height: 6px;
+}
+
+.scrubber-container:focus-within .scrubber .thumb {
+  width: 18px;
+  height: 18px;
+  outline: 2px solid rgba(0, 123, 255, 0.5);
+  outline-offset: 2px;
 }

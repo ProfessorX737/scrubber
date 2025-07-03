@@ -2,49 +2,284 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Scrubber Demo</title>
+    <title>Enhanced Scrubber Demo</title>
     <script src="scrubber.js"></script>
     <link rel="stylesheet" href="scrubber.css" />
     <style>
       body {
         margin: 40px;
         font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
       }
 
       .demo-container {
-        max-width: 600px;
+        max-width: 700px;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .scrubber-section {
+        margin-bottom: 40px;
+        padding: 20px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background-color: #fefefe;
+      }
+
+      .scrubber-section h3 {
+        margin-top: 0;
+        color: #495057;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 8px;
       }
 
       .value-display {
-        font-size: 18px;
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f5f5f5;
+        font-size: 16px;
+        margin-top: 15px;
+        padding: 12px;
+        background-color: #f8f9fa;
         border-radius: 4px;
+        border-left: 4px solid #007bff;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .info-item {
+        background: #e9ecef;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .info-item strong {
+        color: #495057;
+      }
+
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .description {
+        color: #6c757d;
+        font-style: italic;
+        margin-bottom: 15px;
       }
     </style>
   </head>
   <body>
     <div class="demo-container">
-      <h1>Scrubber Demo</h1>
-      <p>Use the scrubber below to adjust the value:</p>
+      <h1>Enhanced Scrubber Demo</h1>
+      <p>
+        Experience the new time-based scrubber with duration and time display
+        features.
+      </p>
 
-      <div id="scrubber-container"></div>
+      <!-- Video Timeline Scrubber -->
+      <div class="scrubber-section">
+        <h3>🎥 Video Timeline (2 hours)</h3>
+        <p class="description">
+          A video timeline starting at 9:00 AM with 24-hour time format
+        </p>
+        <div id="video-scrubber-container"></div>
 
-      <div class="value-display">
-        <strong>Current Value: </strong><span id="display">0</span>
+        <div class="value-display">
+          <strong>Current Position: </strong><span id="video-display">0%</span>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Current Time:</strong> <span id="video-time">09:00:00</span>
+          </div>
+          <div class="info-item">
+            <strong>Duration Elapsed:</strong>
+            <span id="video-duration">0s</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button onclick="setVideoPosition(0.25)">Jump to 25%</button>
+          <button onclick="setVideoPosition(0.5)">Jump to 50%</button>
+          <button onclick="setVideoPosition(0.75)">Jump to 75%</button>
+        </div>
+      </div>
+
+      <!-- Meeting Scrubber -->
+      <div class="scrubber-section">
+        <h3>📅 Meeting Recording (90 minutes)</h3>
+        <p class="description">
+          A meeting recording starting at 2:30 PM with 12-hour time format
+        </p>
+        <div id="meeting-scrubber-container"></div>
+
+        <div class="value-display">
+          <strong>Current Position: </strong
+          ><span id="meeting-display">0%</span>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Current Time:</strong>
+            <span id="meeting-time">2:30:00 PM</span>
+          </div>
+          <div class="info-item">
+            <strong>Duration Elapsed:</strong>
+            <span id="meeting-duration">0s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio Track Scrubber -->
+      <div class="scrubber-section">
+        <h3>🎵 Audio Track (5 minutes)</h3>
+        <p class="description">A short audio track starting at 4:45:30 PM</p>
+        <div id="audio-scrubber-container"></div>
+
+        <div class="value-display">
+          <strong>Current Position: </strong><span id="audio-display">0%</span>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Current Time:</strong> <span id="audio-time">16:45:30</span>
+          </div>
+          <div class="info-item">
+            <strong>Duration Elapsed:</strong>
+            <span id="audio-duration">0s</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      var scrubber = new ScrubberView();
-      document.getElementById("scrubber-container").appendChild(scrubber.elt);
+      // Video Timeline Scrubber
+      var videoScrubber = new ScrubberView({
+        duration: 7200, // 2 hours in seconds
+        startTime: new Date(2024, 0, 1, 9, 0, 0), // 9:00 AM
+        isTwentyFourHourTime: true,
+      });
 
-      var display = document.getElementById("display");
-      display.innerHTML = scrubber.value();
+      document
+        .getElementById("video-scrubber-container")
+        .appendChild(videoScrubber.elt);
+      videoScrubber.redraw();
 
-      scrubber.onValueChanged = function (value) {
-        display.innerHTML = value;
+      var videoDisplay = document.getElementById("video-display");
+      var videoTimeDisplay = document.getElementById("video-time");
+      var videoDurationDisplay = document.getElementById("video-duration");
+
+      videoDisplay.innerHTML = (videoScrubber.value() * 100).toFixed(1) + "%";
+      videoTimeDisplay.innerHTML = videoScrubber.formatTime(
+        videoScrubber.getTimeAtPosition(videoScrubber.value())
+      );
+      videoDurationDisplay.innerHTML = videoScrubber.formatDuration(
+        videoScrubber.getDurationAtPosition(videoScrubber.value())
+      );
+
+      videoScrubber.onValueChanged = function (value) {
+        videoDisplay.innerHTML = (value * 100).toFixed(1) + "%";
+        videoTimeDisplay.innerHTML = videoScrubber.formatTime(
+          videoScrubber.getTimeAtPosition(value)
+        );
+        videoDurationDisplay.innerHTML = videoScrubber.formatDuration(
+          videoScrubber.getDurationAtPosition(value)
+        );
+      };
+
+      function setVideoPosition(position) {
+        videoScrubber.value(position);
+      }
+
+      // Meeting Scrubber
+      var meetingScrubber = new ScrubberView({
+        duration: 5400, // 90 minutes in seconds
+        startTime: new Date(2024, 0, 1, 14, 30, 0), // 2:30 PM
+        isTwentyFourHourTime: false,
+      });
+
+      document
+        .getElementById("meeting-scrubber-container")
+        .appendChild(meetingScrubber.elt);
+      meetingScrubber.redraw();
+
+      var meetingDisplay = document.getElementById("meeting-display");
+      var meetingTimeDisplay = document.getElementById("meeting-time");
+      var meetingDurationDisplay = document.getElementById("meeting-duration");
+
+      meetingDisplay.innerHTML =
+        (meetingScrubber.value() * 100).toFixed(1) + "%";
+      meetingTimeDisplay.innerHTML = meetingScrubber.formatTime(
+        meetingScrubber.getTimeAtPosition(meetingScrubber.value())
+      );
+      meetingDurationDisplay.innerHTML = meetingScrubber.formatDuration(
+        meetingScrubber.getDurationAtPosition(meetingScrubber.value())
+      );
+
+      meetingScrubber.onValueChanged = function (value) {
+        meetingDisplay.innerHTML = (value * 100).toFixed(1) + "%";
+        meetingTimeDisplay.innerHTML = meetingScrubber.formatTime(
+          meetingScrubber.getTimeAtPosition(value)
+        );
+        meetingDurationDisplay.innerHTML = meetingScrubber.formatDuration(
+          meetingScrubber.getDurationAtPosition(value)
+        );
+      };
+
+      // Audio Track Scrubber
+      var audioScrubber = new ScrubberView({
+        duration: 300, // 5 minutes in seconds
+        startTime: new Date(2024, 0, 1, 16, 45, 30), // 4:45:30 PM
+        isTwentyFourHourTime: true,
+      });
+
+      document
+        .getElementById("audio-scrubber-container")
+        .appendChild(audioScrubber.elt);
+      audioScrubber.redraw();
+
+      var audioDisplay = document.getElementById("audio-display");
+      var audioTimeDisplay = document.getElementById("audio-time");
+      var audioDurationDisplay = document.getElementById("audio-duration");
+
+      audioDisplay.innerHTML = (audioScrubber.value() * 100).toFixed(1) + "%";
+      audioTimeDisplay.innerHTML = audioScrubber.formatTime(
+        audioScrubber.getTimeAtPosition(audioScrubber.value())
+      );
+      audioDurationDisplay.innerHTML = audioScrubber.formatDuration(
+        audioScrubber.getDurationAtPosition(audioScrubber.value())
+      );
+
+      audioScrubber.onValueChanged = function (value) {
+        audioDisplay.innerHTML = (value * 100).toFixed(1) + "%";
+        audioTimeDisplay.innerHTML = audioScrubber.formatTime(
+          audioScrubber.getTimeAtPosition(value)
+        );
+        audioDurationDisplay.innerHTML = audioScrubber.formatDuration(
+          audioScrubber.getDurationAtPosition(value)
+        );
       };
     </script>
   </body>
