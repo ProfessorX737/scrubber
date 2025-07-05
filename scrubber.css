@@ -81,8 +81,9 @@
   opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   line-height: 1.3;
+  text-align: center;
 }
 
 .scrubber .tooltip::after {

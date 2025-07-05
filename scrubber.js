@@ -217,8 +217,6 @@ ScrubberView.prototype.attachListeners = function () {
   });
 
   this.scrubberDiv.addEventListener("mousemove", function (evt) {
-    if (mousedown) return; // Don't show tooltip while dragging
-
     var rect = self.scrubberDiv.getBoundingClientRect();
     var xOffset = window.pageXOffset;
     var left = rect.left + xOffset;
